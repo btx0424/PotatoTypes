@@ -27,7 +27,7 @@ class VAE(pl.LightningModule):
             self.log("train_likelihood", likelihood)
             if batch_idx%100==0:
                 image = make_grid(
-                    torch.cat((x[:4], x_[:4].sigmoid_()), dim=0).cpu(),
+                    torch.cat((x[:4], torch.sigmoid(x_[:4])), dim=0).cpu(),
                     nrow=4,
                 )
                 self.logger.experiment.add_image("train_results", image, self.global_step)
