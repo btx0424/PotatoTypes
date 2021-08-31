@@ -7,7 +7,7 @@ from src.api import *
 from torchvision.utils import make_grid
 
 class VAE(pl.LightningModule):
-    def __init__(self, e, d, pz) -> None:
+    def __init__(self, input_size) -> None:
         super().__init__()
         self.encoder = e
         self.decoder = d

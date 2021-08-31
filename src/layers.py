@@ -22,3 +22,15 @@ class BayesianConv2d(nn.Conv2d):
         mean = super().forward(x)
         std = F.conv2d(x**2, torch.exp(self.logstd), stride=self.stride, padding=self.padding, dilation=self.dilation, groups=self.groups)
         return dists.Normal(mean, std)
+
+class PixelShuffleUpscale(nn.PixelShuffle):
+    def __init__(self, in_channels, out_channels, upscale_factor: int):
+        super().__init__(upscale_factor)
+        self.conv = nn.Conv2d(
+            in_channels=in_channels,
+            out_channels=upscale_factor**2 * out_channels,
+            kernel_size=1
+        )
+    
+    def forward(self, x):
+        return super().forward(self.conv(x))
