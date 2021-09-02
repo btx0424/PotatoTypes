@@ -116,9 +116,11 @@ if __name__ == "__main__":
     init()
     gui = ti.GUI('LBM', res=(nx, ny))
     if video:
-        video_manager = ti.VideoManager(output_dir='./', automatic_build=False)
+        video_manager = ti.VideoManager(output_dir='./', framerate=24, automatic_build=False)
+    
+    loop_step=0
     while gui.running:
-        for i in range(40):
+        for i in range(60):
             collision()
             streaming()
             apply_bc()
@@ -129,7 +131,11 @@ if __name__ == "__main__":
         img = cm.viridis(u_magnitude*10)
         gui.set_image(img)
         gui.show()
-        if video:
+        
+        if video and loop_step > 10:
             video_manager.write_frame(img)
+
+        loop_step += 1
+
     if video:
         video_manager.make_video(mp4=False, gif=True)
