@@ -21,19 +21,7 @@ class Parallel(nn.Module):
     
     def forward(self, *xs):
         assert len(xs)==len(self.branches)
-        return tuple(f(x) for f, x in zip(self.branches, xs))
-
-class Output(nn.Module):
-    def __init__(self, module=None):
-        super().__init__()
-        if module is not None:
-            assert callable(module), "module should be callable"
-        self.module = module
-    
-    def forward(self, *x):
-        if self.module is not None:
-            x = self.module(*x)
-        return x
+        return tuple(f(*x) if isinstance(x, tuple) else f(x) for f, x in zip(self.branches, xs))
 
 class Chain(nn.Module):
     def __init__(self, func_list: list) -> None:
@@ -41,15 +29,13 @@ class Chain(nn.Module):
         self.func_list = func_list
         self.module_list = nn.ModuleList([func for func in self.func_list if isinstance(func, nn.Module)])
 
-    def forward(self, x):
+    def forward(self, *x):
         outputs = []
         for func in self.func_list:
             if isinstance(x, tuple):
                 x = func(*x)
             else:
                 x = func(x)
-            if isinstance(func, Output):
-                outputs.append(x)
         if len(outputs)>0:
             return x, *outputs
         else:
