@@ -6,6 +6,8 @@ import pytorch_lightning as pl
 from src.api import *
 from torchvision.utils import make_grid
 
+
+
 class VAE(pl.LightningModule):
     def __init__(self, input_size) -> None:
         super().__init__()
